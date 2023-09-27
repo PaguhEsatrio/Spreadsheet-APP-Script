@@ -1,0 +1,26 @@
+function doGet(e){
+  let obj = {};
+  const ss = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/13s3ti7L6HRzUmnAScGimuXB6A9Hp7-J0ehj321lbW8c/edit#gid=0")
+  const sheet = ss.getSheetByName("Sheet1")
+  const data = sheet.getDataRange().getValues();
+  
+  // Menggunakan array untuk menyimpan data
+  const rows = [];
+  const headers = data[0]; // Mengambil baris pertama sebagai header
+  
+  // Iterasi melalui baris data untuk mengumpulkan data dalam objek
+  for (let i = 1; i < data.length; i++) {
+    const rowData = data[i];
+    let rowObj = {};
+    
+    for (let j = 0; j < headers.length; j++) {
+      rowObj[headers[j]] = rowData[j];
+    }
+    
+    rows.push(rowObj);
+  }
+  
+  obj.content = rows;
+  
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
