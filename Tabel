@@ -1,0 +1,50 @@
+const wbook = SpreadsheetApp.getActive();
+
+function doGet() {
+const sheet = wbook.getSheetByName("Sheet1");
+let data = [];
+const rlen = sheet.getLastRow();
+const clen = sheet.getLastColumn();
+const rows = sheet.getRange( 1, 1,rlen,clen).getValues();
+
+for (let i=0; i< rows.length; i++ ) {
+  const dataRow = rows[i];
+  let record = {};
+
+  for (let j=0; j< clen; j++ ) {
+   record[rows[0][j] ] = dataRow[j];
+  }
+
+  if (i>0) {
+    data.push(record);
+  }
+ }
+
+ const response = {
+  "data":data
+ };
+
+ console.log(response);
+
+ return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost (request) {
+  const action = request.parameter.action;
+  const data = JSON.parse(request.postData.contents);
+
+  if (action == 'insert'){
+    sheet.appendRow([
+      data.nama,
+      data.sisa
+    ]);
+  }
+
+  let response = {
+    "sucess" : true,
+    "message" : "Sukses melakukan perubahan",
+    "data" : request
+  }
+
+  return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);
+}
